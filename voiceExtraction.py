@@ -1,27 +1,26 @@
 import spacy
 from spacy.matcher import Matcher
 
-# Load language model (replace with your language)
-nlp = spacy.load("en_core_web_sm")
-
-# Create a matcher to identify specific patterns
-matcher = Matcher(nlp.vocab)
-
-# Define patterns for quantities and dish names
-patterns = [
-    # Quantity + dish name (e.g., "2 pizzas")
-    [{"POS": "NUM"}, {"POS": "NOUN"}],
-    # Quantity + optional modifier + dish name (e.g., "1 large pizza")
-    [{"POS": "NUM"}, {"POS": "ADJ", "OP": "?"}, {"POS": "NOUN"}],
-    # Dish name without explicit quantity (e.g., "chicken tikka masala")
-    [{"POS": "NOUN"}],  # Refine with more specific tags if possible
-]
-
-# Add patterns to the matcher
-for pattern in patterns:
-    matcher.add("dish_quantity", [pattern], on_match=None)
-
 def extract_order_spacy_ner(text):
+    # Load language model (replace with your language)
+    nlp = spacy.load("en_core_web_sm")
+
+    # Create a matcher to identify specific patterns
+    matcher = Matcher(nlp.vocab)
+
+    # Define patterns for quantities and dish names
+    patterns = [
+        # Quantity + dish name (e.g., "2 pizzas")
+        [{"POS": "NUM"}, {"POS": "NOUN"}],
+        # Quantity + optional modifier + dish name (e.g., "1 large pizza")
+        [{"POS": "NUM"}, {"POS": "ADJ", "OP": "?"}, {"POS": "NOUN"}],
+        # Dish name without explicit quantity (e.g., "chicken tikka masala")
+        [{"POS": "NOUN"}],  # Refine with more specific tags if possible
+    ]
+
+    # Add patterns to the matcher
+    for pattern in patterns:
+        matcher.add("dish_quantity", [pattern], on_match=None)
     # Process text
     doc = nlp(text)
     matches = matcher(doc)
@@ -34,7 +33,7 @@ def extract_order_spacy_ner(text):
         extracted = doc[start:end].text
 
         items = extracted.split(" ")
-        print(items)
+        # print(items)
 
         nums = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 
@@ -51,6 +50,6 @@ def extract_order_spacy_ner(text):
     return order_items
 
 # Example usage
-text = "i want to eat 5 pizzas and 4 pepsis"
-extracted_order = extract_order_spacy_ner(text)
-print(extracted_order)
+# text = "i want to eat 5 pizzas and 4 pepsis"
+# extracted_order = extract_order_spacy_ner(text)
+# print(extracted_order)
