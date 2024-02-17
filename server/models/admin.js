@@ -61,7 +61,9 @@ const adminSchema = new mongoose.Schema(
 
     city: String,
 
-    img: String
+    img: String,
+
+    routeMarker: []
   }
 );
 
