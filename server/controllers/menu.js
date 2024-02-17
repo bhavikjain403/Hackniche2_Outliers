@@ -90,9 +90,37 @@ const getFoodByName = async (req,res) => {
      }
 }
 
+const getMenuByTruck = async (req,res) => {
+  try {
+      var truckId = req.query.id
+      var menu = await Menu.find({truckId})
+      if(menu.length>0) {
+          res.status(200).json({
+              message: "You have the following items!",
+              status: true,
+              data: menu,
+            });
+      }
+      else {
+          res.status(400).json({
+            message: "No items available !",
+            status: false,
+            data: {},
+          });
+        }
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 module.exports = {
     addItem,
     getMenuByCuisine,
     updateItem,
-    getFoodByName
+    getFoodByName,
+    getMenuByTruck
 };
