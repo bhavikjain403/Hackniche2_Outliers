@@ -1,5 +1,4 @@
 // Importing modules
-const { DateRangePicker } = require("@syncfusion/ej2-react-calendars");
 const mongoose = require("mongoose");
 
 // Creating the schema
