@@ -18,11 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Dropzone, FileMosaic } from '@dropzone-ui/react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cuisines } from '@/lib/MenuCuisines';
 import { Star } from 'lucide-react';
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { LegacyRef, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import {
   getStorage,
   uploadBytesResumable,
@@ -32,16 +33,42 @@ import {
 import { generateHex } from '@/lib/utils';
 import { uploadFileToFirebase } from '@/lib/firebase-upload-file';
 import { app } from '@/lib/firebase';
+import vegIcon from '../assets/veg-icon.png';
+import nonVegIcon from '../assets/non-veg-icon.png';
 
 function Menu() {
-  const items = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const dummyMenuItem = {
+    truckId: 0,
+    cuisine: cuisines[0],
+    img: 'https://firebasestorage.googleapis.com/v0/b/nomnom-7ef89.appspot.com/o/menu%2F2024161750166484c74a1fdcassata-semifreddo-15858-2.jpg?alt=media&token=b8b2683a-a631-472f-9604-a64e9271a449',
+    name: 'Ice cream',
+    price: 999,
+    quantity: 20,
+    veg: 0,
+    customization: [
+      { name: 'chocolate syrup', amount: 20 },
+      { name: 'choco chips', amount: 10 },
+    ],
+    description: 'this is an ice creamy cream',
+  };
+  const items = [
+    dummyMenuItem,
+    dummyMenuItem,
+    dummyMenuItem,
+    dummyMenuItem,
+    dummyMenuItem,
+    dummyMenuItem,
+  ];
   const [isEditing, setIsEditing] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
-  function toggleEditMode(id: number | null) {
-    console.log('hi', id);
-    if (id != null) {
+  function toggleEditMode(item) {
+    console.log(item);
+    if (item != null) {
+      setEditingItem(item);
       setIsEditing(true);
     } else {
+      setEditingItem(null);
       setIsEditing(false);
     }
   }
@@ -52,69 +79,68 @@ function Menu() {
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Menu</h2>
         </div>
-        <Tabs defaultValue="add" className="space-y-4">
+        <Tabs defaultValue="view" className="space-y-4">
           <TabsList>
             <TabsTrigger value="view">View menu</TabsTrigger>
             <TabsTrigger value="add">Add item</TabsTrigger>
           </TabsList>
           {isEditing ? (
-            <EditItem exitEditingMode={toggleEditMode} />
+            <EditItem item={editingItem} exitEditingMode={toggleEditMode} />
           ) : (
             <ViewMenu items={items} enterEditingMode={toggleEditMode} />
           )}
-          <AddItem />
+          <AddItem prefilledItem={null} isInEditMode={false} />
         </Tabs>
       </div>
     </div>
   );
 }
 
-function EditItem({ exitEditingMode }) {
-  return (
-    <TabsContent value="view">
-      <Card>
-        <Button
-          onClick={() => {
-            exitEditingMode();
-          }}
-        >
-          Save
-        </Button>
-      </Card>
-    </TabsContent>
-  );
+function EditItem({ item, exitEditingMode }) {
+  return <AddItem prefilledItem={item} isInEditMode={true} />;
 }
 
 function ViewMenu({ items, enterEditingMode }) {
   return (
     <TabsContent value="view">
       <Card>
-        <CardContent className="px-1 py-0 h-[70vh]">
+        <CardContent className="px-1 py-0 min-h-[70vh]">
           <ScrollArea className=" py-2 h-full">
             <div className="w-full grid grid-cols-4 gap-5 px-4">
               {items.map((item, index) => {
                 return (
                   <Card
                     key={index}
-                    className="rounded-3xl overflow-hidden drop-shadow-lg aspect-[5/6]"
+                    className="rounded-3xl overflow-hidden drop-shadow-lg pb-2"
                   >
-                    <CardContent className="flex flex-col p-0">
+                    <CardContent className="flex items-center flex-col p-0">
                       <img
-                        src="https://img.delicious.com.au/R0F10d9O/w759-h506-cfill/del/2015/10/cassata-semifreddo-15858-2.jpg"
-                        className="w-full object-cover"
+                        src={item.img}
+                        className="mt-2 w-[95%] rounded-2xl  object-cover"
                       />
-                      <div className="flex flex-col px-3 pb-2 font-semibold text-xl">
-                        <div className="w-full flex justify-between">
-                          Ice Cream
+
+                      <div className="flex flex-col w-full px-3 pb-2 font-semibold text-xl">
+                        <div className="mt-1 w-full flex justify-between">
+                          {item.name}
                         </div>
-                        <div className="w-full flex justify-between mt-1">
-                          <p>₹ 100</p>
-                          <p className="flex items-center">
-                            <Star className="stroke-amber-400" /> <p>4.7</p>
+                        <div className="font-medium text-sm w-full flex justify-between">
+                          {item.description}
+                        </div>
+                        <div className="w-full flex justify-between">
+                          <p className="my-4">₹ {item.price}</p>
+                          <p className="flex items-center space-x-2">
+                            {item.veg === 2 ? (
+                              <img src={nonVegIcon} className="h-5" />
+                            ) : (
+                              <img src={vegIcon} className="h-5" />
+                            )}
+                            {item.veg === 0 && (
+                              <p className="text-green-700">Jain</p>
+                            )}
                           </p>
                         </div>
                       </div>
-                      <div className="flex justify-between px-3 gap-2">
+                      <div className="flex w-full justify-between px-3 gap-2">
                         <Button
                           variant={'secondary'}
                           className="border-slate-300 border-2 flex-1"
@@ -142,23 +168,33 @@ type customization = {
   amount: number;
 };
 
-function AddItem() {
+function AddItem({ prefilledItem, isInEditMode }) {
   const formRef = useRef();
-  const imgRef = useRef();
   const fbApp = app;
   const storage = getStorage();
 
-  const [customizations, setCustomizations] = useState<customization[]>([]);
-  const [previewImage, setPreviewImage] = useState('');
-  const [categoryDropDown, setCategoryDropDown] = useState(null);
-  const [cuisineDropdown, setCuisineDropdown] = useState(null);
+  const [thumbnail, setThumbnail] = useState(
+    prefilledItem?.img
+      ? [
+          {
+            id: 'fileId',
+            type: 'image/jpeg',
+            imageUrl: prefilledItem?.img,
+            name: 'Thumbnail.jpg',
+          },
+        ]
+      : []
+  );
+  const [customizations, setCustomizations] = useState<customization[]>(
+    prefilledItem?.customization || []
+  );
 
-  function onImageChange(event: SyntheticEvent) {
-    if (event.target.files && event.target.files[0]) {
-      console.log('got image');
-      setPreviewImage(URL.createObjectURL(event.target.files[0]));
-    }
-  }
+  const [categoryDropDown, setCategoryDropDown] = useState(
+    prefilledItem?.veg != undefined ? String(prefilledItem?.veg) : undefined
+  );
+  const [cuisineDropdown, setCuisineDropdown] = useState(
+    prefilledItem?.cuisine
+  );
 
   async function prepareDataForApiRequest() {
     if (formRef.current) {
@@ -170,47 +206,86 @@ function AddItem() {
       const cuisine = cuisineDropdown;
       const customization = customizations;
 
-      const imageFile = imgRef.current.files[0];
-      const uploadFileName = generateHex() + imageFile.name;
-      const metadata = {
-        name: imageFile.name,
-        size: imageFile.size,
-        contentType: imageFile.type,
+      let url;
+      if (isInEditMode) {
+        url = thumbnail[0].imageUrl;
+      } else {
+        const imageFile: File = thumbnail[0];
+        const uploadFileName = generateHex() + imageFile.name;
+        const metadata = {
+          name: imageFile.name,
+          size: imageFile.size,
+          contentType: imageFile.type,
+        };
+
+        const storageRef = ref(storage, 'menu/' + uploadFileName);
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          imageFile.file,
+          metadata
+        );
+        uploadFileToFirebase(uploadTask);
+        await uploadTask;
+        url = await getDownloadURL(uploadTask.snapshot.ref);
+      }
+
+      const result = {
+        truckId: 0,
+        cuisine,
+        img: url,
+        name,
+        price: amount,
+        quantity,
+        veg: category,
+        customization,
+        description,
       };
-
-      console.log(imageFile.file, metadata, uploadFileName);
-
-      // const storageRef = ref(storage, 'menu/' + uploadFileName);
-      // const uploadTask = uploadBytesResumable(
-      //   storageRef,
-      //   imageFile.file,
-      //   metadata
-      // );
-      // uploadFileToFirebase(uploadTask);
-      // await uploadTask;
-      // const url = await getDownloadURL(uploadTask.snapshot.ref);
-      // console.log('uploaded file:', url);
+      console.log(result);
     }
   }
 
   return (
-    <TabsContent value="add" className="flex justify-center items-center">
+    <TabsContent
+      value={isInEditMode ? 'view' : 'add'}
+      className="flex justify-center items-center"
+    >
       <Card className="w-[750px]">
         <CardHeader>
-          <CardTitle>Add imageFile</CardTitle>
+          <CardTitle>Add Item</CardTitle>
           <CardDescription>Add a new item to the menu</CardDescription>
         </CardHeader>
         <CardContent>
           <form ref={formRef} className="flex flex-col space-y-4">
             <div className="flex gap-4">
               <div className="flex-1 flex flex-col space-y-4">
-                <Input placeholder="Name" name="name" />
-                <Input placeholder="Description" name="description" />
-                <Input placeholder="Price" name="price" type="number" />
-                <Input placeholder="Quantity" name="quantity" type="number" />
+                <Input
+                  placeholder="Name"
+                  name="name"
+                  defaultValue={prefilledItem?.name || ''}
+                />
+                <Input
+                  placeholder="Description"
+                  name="description"
+                  defaultValue={prefilledItem?.description}
+                />
+                <Input
+                  placeholder="Price"
+                  name="price"
+                  type="number"
+                  defaultValue={prefilledItem?.price}
+                />
+                <Input
+                  placeholder="Quantity"
+                  name="quantity"
+                  type="number"
+                  defaultValue={prefilledItem?.quantity}
+                />
                 <div className="gap-3 flex items-center justify-start">
                   <Label>Category</Label>
-                  <Select onValueChange={(e) => setCategoryDropDown(e)}>
+                  <Select
+                    value={categoryDropDown}
+                    onValueChange={(e) => setCategoryDropDown(e)}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -225,7 +300,10 @@ function AddItem() {
                 </div>
                 <div className="gap-6 flex items-center justify-start">
                   <Label>Cuisine</Label>
-                  <Select onValueChange={(e) => setCuisineDropdown(e)}>
+                  <Select
+                    value={cuisineDropdown}
+                    onValueChange={(e) => setCuisineDropdown(e)}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a Cuisine" />
                     </SelectTrigger>
@@ -245,18 +323,28 @@ function AddItem() {
               </div>
               <div className="flex-1 -mt-8">
                 <Label htmlFor="picture">Picture</Label>
-                <Input
-                  ref={imgRef}
-                  id="picture"
-                  type="file"
-                  onChange={(e) => onImageChange(e)}
-                  className="mt-2"
-                />
-                <img
-                  id="preview-image"
-                  src={previewImage}
-                  className="mt-4 rounded-md"
-                />
+                <Dropzone
+                  onChange={(file) => {
+                    console.log(file);
+                    setThumbnail(file);
+                  }}
+                  value={thumbnail}
+                  accept="image/png, image/jpeg, image/webp"
+                  maxFiles={1}
+                >
+                  {thumbnail.map((file) => {
+                    console.log(file);
+                    return (
+                      <FileMosaic
+                        preview
+                        key={file.id}
+                        {...file}
+                        onDelete={() => setThumbnail([])}
+                        info
+                      />
+                    );
+                  })}
+                </Dropzone>
               </div>
             </div>
             <div className="flex flex-col space-y-2">
@@ -274,7 +362,7 @@ function AddItem() {
                 Add
               </Button>
               <div className="space-y-4 flex flex-col">
-                {customizations.map((item, index) => {
+                {customizations?.map((item, index) => {
                   return (
                     <CustomizationPill
                       customization={item}
@@ -289,7 +377,7 @@ function AddItem() {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                prepareDataForApiRequest(e);
+                prepareDataForApiRequest();
               }}
             >
               Submit

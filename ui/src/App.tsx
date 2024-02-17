@@ -7,7 +7,7 @@ import Menu from './pages/Menu';
 
 function App() {
   return (
-    <>
+    <div className="font-poppins">
       <Navbar />
       <Routes>
         <Route path="/" element={<AuthenticationPage />} />
@@ -15,7 +15,7 @@ function App() {
         <Route path="/map" element={<RouteSelector />} />
         <Route path="/menu" element={<Menu />} />
       </Routes>
-    </>
+    </div>
   );
 }
 

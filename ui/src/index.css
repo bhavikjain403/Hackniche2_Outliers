@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 .leaflet-popup-content {
     /* padding: 1px; */
     display: flex;
@@ -11,6 +13,10 @@
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.font-poppins {
+  font-family: "Poppins", sans-serif;
 }
 
 @layer base {
