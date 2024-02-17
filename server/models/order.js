@@ -21,7 +21,11 @@ const orderSchema = new mongoose.Schema(
 
     amount: Number,
 
-    placedTime: Date,
+    placedTime: 
+    {
+        type: Date,
+        default: Date.now()
+    },
 
     pickupTime: Date,
 

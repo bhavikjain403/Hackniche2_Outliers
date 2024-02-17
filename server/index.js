@@ -21,12 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 const userRoute = require("./routes/user");
 const adminRoute = require("./routes/admin");
 const menuRoute = require("./routes/menu");
+const orderRoute = require("./routes/order");
 
 
 // Routes
 app.use("/api/user", userRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/menu", menuRoute);
+app.use("/api/order", orderRoute);
 
 
 app.get("/api", (req, res) => {
