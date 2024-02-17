@@ -29,6 +29,7 @@ const signup = async (req, res) => {
     newAdmin = removeSensitiveData(newAdmin);
     // Sending a response back
     res.status(201).json({
+        status: true,
       message: "Admin Signed Up",
       data: {
         token,
@@ -73,7 +74,7 @@ const login = async (req, res) => {
     admin = removeSensitiveData(admin);
 
     res.status(200).json({
-      status: false,
+      status: true,
       data: {
         token,
         admin
@@ -106,6 +107,7 @@ const logout = async (req, res) => {
 
     res.status(200).json({
       message: "Successfully logged out!",
+      status: true
     });
   } catch (error) {
     res.status(400).json({
