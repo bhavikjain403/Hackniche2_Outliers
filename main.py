@@ -17,25 +17,34 @@ from flask_pymongo import pymongo
 from textblob import TextBlob
 from decouple import config
 
+import db
+
 app = Flask(__name__)
 CORS(app)
 
-CONNECTION_STRING = "mongodb+srv://bhavikjain403:3JXLUL5N1pzApsyb@cluster0.1deu8rv.mongodb.net/?retryWrites=true&w=majority"
-client = pymongo.MongoClient(CONNECTION_STRING)
-db = client.get_database('test')
-user_collection = pymongo.collection.Collection(db, 'users')
-menu_collection = pymongo.collection.Collection(db, 'menus')
-orders_collection = pymongo.collection.Collection(db, 'orders')
+# CONNECTION_STRING = "mongodb+srv://bhavikjain403:3JXLUL5N1pzApsyb@cluster0.1deu8rv.mongodb.net/?retryWrites=true&w=majority"
+# client = pymongo.MongoClient(CONNECTION_STRING)
+# db = client.get_database('test')
+# user_collection = pymongo.collection.Collection(db, 'users')
+# menu_collection = pymongo.collection.Collection(db, 'menus')
+# orders_collection = pymongo.collection.Collection(db, 'orders')
 
 SID = config("TWILIO_ACCOUNT_SID")
 Auth = config("TWILIO_AUTH_TOKEN")
 
 client = Client(SID, Auth)
 # Bhavikjain@170810
+# message = client.messages.create(
+#                               body='Hello there!',
+#                               from_='whatsapp:+14155238886',
+#                               to='whatsapp:+919152412545'
+#                           )
 def respond(text, img):
     response = MessagingResponse()
     message = Message()
     message.body(text)
+    
+    # with open(img, "rb") as f:
     message.media(img)
     return str(response.append(message))
 
@@ -52,13 +61,13 @@ def hello_world():
 def reply():
     message = request.form.get('Body').lower()
     num=request.form.get('From')[12:]
-    img = request.form["img"]
-    data=list(db.user_collection.find({ "phone" : num }))
-    print(data)
+    img = 'https://raw.githubusercontent.com/dianephan/flask_upload_photos/main/UPLOADS/DRAW_THE_OWL_MEME.png'
+    print("img", img)
+    data=list(db.user_collection.find({"phone":num}))
     if len(data):
         return respond("Today's special is XYZ Food", img)
     else:
-        return respond('You do not have an account. Please create an account first')
+        return respond('You do not have an account. Please create an account first', img)
 
 @app.route("/extract", methods=["POST"])
 def orderExtraction():
@@ -93,10 +102,8 @@ def orderExtraction():
 def menuExtraction():
     if request.method=="POST":
         img = request.files['image']
-
         img_loc = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(img.filename))
         img.save(img_loc)
-
         return menuExtract(img_loc)
     else:
         return jsonify("Invalid Method")

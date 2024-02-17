@@ -31,6 +31,7 @@ def menuExtract(img_loc):
                     val["dish"] = dish[1:]
                     val["price"] = price 
                     val["cuisine"] = "!"
+                    val["complete"] = False
                     menu.append(val)
             print(menu)            
         return menu
