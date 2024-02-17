@@ -8,7 +8,8 @@ const {
   login,
   logout,
   getTruckByName,
-  getNearbyTrucks
+  getNearbyTrucks,
+  getTruckFromId
 } = require("../controllers/admin");
 
 // Initializing router
@@ -18,6 +19,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.get("/gettruckbyname", getTruckByName);
 router.get("/getNearbyTrucks", getNearbyTrucks);
+router.get("/getTruckFromId", getTruckFromId);
 router.put("/logout", authorizeJWT.verifyJWT, logout);
 // Exporting Modules
 module.exports = router;
