@@ -114,9 +114,37 @@ const logout = async (req, res) => {
   }
 };
 
+const getTruckByName = async (req,res) => {
+    try {
+        var name = req.query.name
+        var truck = await Admin.find({"name": { "$regex": name, "$options": "i" }})
+        if(truck.length>0) {
+            res.status(200).json({
+                message: "You have the following trucks!",
+                status: true,
+                data: truck,
+              });
+        }
+        else {
+            res.status(400).json({
+              message: "No trucks available !",
+              status: false,
+              data: {},
+            });
+          }
+    }
+    catch (err) {
+        res.status(400).json({
+          message: err.message,
+          status: false
+        });
+     }
+}
+
 // Exporting modules
 module.exports = {
   signup,
   login,
   logout,
+  getTruckByName
 };

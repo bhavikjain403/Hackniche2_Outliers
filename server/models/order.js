@@ -5,12 +5,12 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema(
   {
     userId: {
-        type: ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
 
     adminId: {
-        type: ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'Admin'
     },
 
