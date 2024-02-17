@@ -7,7 +7,8 @@ const addItem = async (req,res) => {
         })
         await newMenu.save()
         res.status(201).json({
-            message: "Item added!"
+            message: "Item added!",
+            status: true
           });
     }
     catch (err) {
@@ -23,7 +24,8 @@ const updateItem = async (req,res) => {
         var id = req.body._id
         await Menu.findByIdAndUpdate(id, req.body)
         res.status(201).json({
-            message: "Item updated!"
+            message: "Item updated!",
+            status: true
           });
     }
     catch (err) {

@@ -7,7 +7,8 @@ const addOrder = async (req,res) => {
         })
         await newOrder.save()
         res.status(201).json({
-            message: "Order placed successfully!"
+            message: "Order placed successfully!",
+            status: true
           });
     }
     catch (err) {
@@ -23,7 +24,8 @@ const updateOrder = async (req,res) => {
         var id = req.body._id
         await Order.findByIdAndUpdate(id, req.body)
         res.status(201).json({
-            message: "Order updated!"
+            message: "Order updated!",
+            status: true
           });
     }
     catch (err) {
