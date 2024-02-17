@@ -194,11 +194,30 @@ const getNearbyTrucks = async (req,res) => {
    }
 }
 
+const getTruckFromId = async (req,res) => {
+  try {
+      var id = req.query.id
+      var truck = await Admin.findById(id)
+      res.status(200).json({
+          message: "You have the following truck!",
+          status: true,
+          data: truck,
+        });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 // Exporting modules
 module.exports = {
   signup,
   login,
   logout,
   getTruckByName,
-  getNearbyTrucks
+  getNearbyTrucks,
+  getTruckFromId
 };
