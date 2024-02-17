@@ -59,7 +59,9 @@ const adminSchema = new mongoose.Schema(
 
     cuisine: [],
 
-    city: String
+    city: String,
+
+    img: String
   }
 );
 

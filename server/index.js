@@ -22,6 +22,8 @@ const userRoute = require("./routes/user");
 const adminRoute = require("./routes/admin");
 const menuRoute = require("./routes/menu");
 const orderRoute = require("./routes/order");
+const notificationRoute = require("./routes/notification");
+const reviewRoute = require("./routes/review");
 
 
 // Routes
@@ -29,6 +31,8 @@ app.use("/api/user", userRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/menu", menuRoute);
 app.use("/api/order", orderRoute);
+app.use("/api/notification", notificationRoute);
+app.use("/api/review", reviewRoute);
 
 
 app.get("/api", (req, res) => {

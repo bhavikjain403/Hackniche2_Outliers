@@ -14,9 +14,19 @@ const reviewSchema = new mongoose.Schema(
         ref: 'Admin'
     },
 
+    orderId: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Order'
+    },
+
     rating: Number,
 
-    review: String
+    review: String,
+
+    date: {
+      type: Date,
+      default: Date.now()
+    }
   }
 );
 

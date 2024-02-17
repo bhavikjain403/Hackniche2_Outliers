@@ -9,7 +9,8 @@ const {
   logout,
   getTruckByName,
   getNearbyTrucks,
-  getTruckFromId
+  getTruckFromId,
+  deleteTruck
 } = require("../controllers/admin");
 
 // Initializing router
@@ -20,6 +21,7 @@ router.post("/login", login);
 router.get("/gettruckbyname", getTruckByName);
 router.get("/getNearbyTrucks", getNearbyTrucks);
 router.get("/getTruckFromId", getTruckFromId);
+router.get("/deleteTruck", deleteTruck);
 router.put("/logout", authorizeJWT.verifyJWT, logout);
 // Exporting Modules
 module.exports = router;
