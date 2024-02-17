@@ -15,11 +15,7 @@ const menuSchema = new mongoose.Schema(
     img: String,
     name: String,
     price: Number,
-    available: {
-        type: String,
-        enum: ['yes', 'no'],
-        default: 'yes'
-    },
+    quantity: Number,
     veg: {
         type: Number,
         enum: [0,1,2]

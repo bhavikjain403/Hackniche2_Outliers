@@ -143,10 +143,62 @@ const getTruckByName = async (req,res) => {
      }
 }
 
+function distance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const p1 = lat1 * Math.PI/180;
+  const p2 = lat2 * Math.PI/180;
+  const deltaLon = lon2 - lon1;
+  const deltaLambda = (deltaLon * Math.PI) / 180;
+  const d = Math.acos(
+    Math.sin(p1) * Math.sin(p2) + Math.cos(p1) * Math.cos(p2) * Math.cos(deltaLambda),
+  ) * R;
+  return d/500;
+}
+
+
+const getNearbyTrucks = async (req,res) => {
+  try {
+      var latitude = req.query.latitude
+      var longitude = req.query.longitude
+      var truck = await Admin.find()
+      var radius = 5
+      var data = []
+      var miniDist = 1000000
+      var miniTruck = {}
+      for(let i=0; i<truck.length; i++) {
+        var dist = distance(latitude,longitude,truck[i].latitude,truck[i].longitude)
+        if(dist<=radius) {
+          truck[i] = {...truck[i]["_doc"],"distance":dist}
+          data.push(truck[i])
+        }
+        if(dist<miniDist) {
+          miniDist = dist
+          miniTruck = truck[i]
+        }
+      }
+      if(data.length==0) {
+        miniTruck = {...miniTruck["_doc"], "distance": miniDist}
+        data.push(miniTruck)
+      }
+        res.status(200).json({
+            message: "You have the following trucks!",
+            status: true,
+            data: data,
+          });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 // Exporting modules
 module.exports = {
   signup,
   login,
   logout,
-  getTruckByName
+  getTruckByName,
+  getNearbyTrucks
 };

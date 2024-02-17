@@ -40,7 +40,7 @@ const orderSchema = new mongoose.Schema(
         default: 'placed'
     },
 
-    items: {}
+    items: []
   }
 );
 

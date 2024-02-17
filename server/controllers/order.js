@@ -1,4 +1,5 @@
 const Order = require("../models/order");
+const Menu = require("../models/menu");
 
 const addOrder = async (req,res) => {
     try {
@@ -6,6 +7,14 @@ const addOrder = async (req,res) => {
             ...req.body
         })
         await newOrder.save()
+        var items = req.body.items
+        for(let i=0; i<items.length; i++) {
+          var id=items[i].itemid
+          var data = await Menu.findById(id)
+          data = data
+          var prefix = data["quantity"]
+          await Menu.findByIdAndUpdate(id, {quantity : prefix - items[i].quantity})
+        }
         res.status(201).json({
             message: "Order placed successfully!",
             status: true
