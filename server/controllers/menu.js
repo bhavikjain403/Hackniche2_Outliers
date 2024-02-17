@@ -117,10 +117,28 @@ const getMenuByTruck = async (req,res) => {
    }
 }
 
+const deleteItem = async (req,res) => {
+  try {
+      var id = req.query.id
+      await Menu.findByIdAndDelete(id)
+      res.status(200).json({
+          message: "Item deleted!",
+          status: true
+        });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 module.exports = {
     addItem,
     getMenuByCuisine,
     updateItem,
     getFoodByName,
-    getMenuByTruck
+    getMenuByTruck,
+    deleteItem
 };

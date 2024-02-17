@@ -6,7 +6,8 @@ const {
   getMenuByCuisine,
   updateItem,
   getFoodByName,
-  getMenuByTruck
+  getMenuByTruck,
+  deleteItem
 } = require("../controllers/menu");
 
 // Initializing router
@@ -17,5 +18,6 @@ router.post("/updateitem", updateItem);
 router.get("/getmenubycuisine", getMenuByCuisine);
 router.get("/getfoodbyname", getFoodByName);
 router.get("/getMenuByTruck", getMenuByTruck);
+router.get("/deleteItem", deleteItem);
 // Exporting Modules
 module.exports = router;
