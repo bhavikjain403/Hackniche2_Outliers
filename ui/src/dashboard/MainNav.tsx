@@ -37,6 +37,13 @@ export function MainNav({
       >
         Orders
       </Link>
+      <Link
+        to="/update"
+        /* TODO: add muted background to text when not active */
+        className="text-sm font-medium transition-colors hover:text-primary"
+      >
+        Update location
+      </Link>
     </nav>
   );
 }

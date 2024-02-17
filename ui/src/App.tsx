@@ -6,6 +6,7 @@ import RouteSelector from './pages/RouteSelector';
 import Menu from './pages/Menu';
 import ProtectedRoute from './pages/ProtectedRoute';
 import Orders from './pages/Orders';
+import UpdateLocation from './pages/UpdateLocation';
 
 function App() {
   return (
@@ -42,6 +43,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/update"
+          element={
+            <ProtectedRoute>
+              <UpdateLocation />
             </ProtectedRoute>
           }
         />

@@ -23,30 +23,12 @@ import {
   useState,
 } from 'react';
 import LoaderSpinner from '@/components/ui/LoaderSpinner';
-import { MarkerIcon } from '@/components/app/map/MarkerIcon';
-import { Input } from '@/components/ui/input';
-import { Check, CheckCircle2Icon, XCircle } from 'lucide-react';
+import { XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Slider from '@mui/material/Slider';
-
-const marks = [
-  {
-    value: 0,
-    label: '0°C',
-  },
-  {
-    value: 20,
-    label: '20°C',
-  },
-  {
-    value: 37,
-    label: '37°C',
-  },
-  {
-    value: 100,
-    label: '100°C',
-  },
-];
+import { NODEJS_ENDPOINT } from '@/api/endpoints';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 type marker = {
   coordinate: number[];
@@ -132,7 +114,17 @@ function RouteSelector() {
             <Button
               className="flex-1"
               onClick={() => {
+                const truckId = localStorage.getItem('id');
                 console.log(markers);
+                const requestBody = { truckId, routeMarker: markers };
+                axios
+                  .post(NODEJS_ENDPOINT + 'admin/addroutemarker', requestBody)
+                  .then(() =>
+                    toast('Route added', {
+                      description: 'Route and schedule was added successfully!',
+                      action: { label: 'Close', onClick: () => null },
+                    })
+                  );
               }}
             >
               Save Route
