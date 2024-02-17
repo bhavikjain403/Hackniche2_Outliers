@@ -4,11 +4,20 @@ import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Github, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AuthApi from "./api/auth";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+
+  const history = useNavigate();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -19,48 +28,80 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     }, 3000);
   }
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    AuthApi.Login(formData)
+      .then((response) => {
+        if (response.data) {
+          setProfile(response);
+        } else {
+          console.log(response)
+          setError(response.data.msg);
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          return setError(error.response.data.msg);
+        }
+        return setError("There has been an error.");
+      })
+  };
+
+  const setProfile = (response) => {
+    let user = { ...response.data };
+    localStorage.setItem("name", user.data.admin.name);
+    localStorage.setItem("id", user.data.admin._id);
+    localStorage.setItem("token", user.data.token);
+    return;
+  };
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
-        <div className="grid gap-2">
-          <div className="grid gap-1">
+        <div className="grid gap-6">
+          <div className="grid gap-2">
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="Email"
               type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
+              name="email"
               disabled={isLoading}
+              onChange={handleChange}
+              value={formData?.email}
+              required
             />
           </div>
-          <Button disabled={isLoading}>
+          <div className="grid gap-2">
+            <Label className="sr-only" htmlFor="email">
+              Email
+            </Label>
+            <Input
+              id="password"
+              placeholder="Password"
+              type="password"
+              name="password"
+              disabled={isLoading}
+              onChange={handleChange}
+              value={formData?.password}
+              required
+            />
+          </div>
+          <Button disabled={isLoading} onClick={handleSubmit}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Sign In with Email
+            Sign In
           </Button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Github className="mr-2 h-4 w-4" />
-        )}{" "}
-        GitHub
-      </Button>
     </div>
   );
 }

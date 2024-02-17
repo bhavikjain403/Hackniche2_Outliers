@@ -30,7 +30,6 @@ export default function AuthenticationPage() {
             buttonVariants({ variant: "ghost" }),
             "absolute right-4 top-4 md:right-8 md:top-8"
           )}>
-          <Button>Login</Button>
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
           <div className="absolute inset-0 bg-zinc-900" />
@@ -63,7 +62,7 @@ export default function AuthenticationPage() {
           <Card className="p-4 shadow-sm flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
+                Sign In
               </h1>
               <p className="text-sm text-muted-foreground">
                 Enter your email below to create your account
