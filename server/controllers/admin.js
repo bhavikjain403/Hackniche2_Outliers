@@ -1,5 +1,6 @@
 // Importing modules
 const Admin = require("../models/admin");
+const Menu = require("../models/menu");
 const bcryptjs = require("bcryptjs");
 const { removeSensitiveData, getRegion } = require("../utils/functions");
 
@@ -194,6 +195,37 @@ const getNearbyTrucks = async (req,res) => {
    }
 }
 
+const getNearestTruck = async (req,res) => {
+  try {
+      var latitude = req.query.latitude
+      var longitude = req.query.longitude
+      var cuisine = req.query.cuisine
+      var truck = await Admin.find()
+      var miniDist = 1000000
+      var miniTruck = {}
+      for(let i=0; i<truck.length; i++) {
+        var dist = distance(latitude,longitude,truck[i].latitude,truck[i].longitude)
+        if(dist<miniDist) {
+          miniDist = dist
+          miniTruck = truck[i]["_id"]
+        }
+      }
+        console.log(miniTruck)
+        var menu = await Menu.find({truckId:miniTruck, cuisine:cuisine})
+        res.status(200).json({
+            message: "You have the following items!",
+            status: true,
+            data: menu,
+          });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 const getTruckFromId = async (req,res) => {
   try {
       var id = req.query.id
@@ -255,5 +287,6 @@ module.exports = {
   getNearbyTrucks,
   getTruckFromId,
   deleteTruck,
-  addRouteMarker
+  addRouteMarker,
+  getNearestTruck
 };

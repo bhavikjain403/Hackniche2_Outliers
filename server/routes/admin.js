@@ -11,7 +11,8 @@ const {
   getNearbyTrucks,
   getTruckFromId,
   deleteTruck,
-  addRouteMarker
+  addRouteMarker,
+  getNearestTruck
 } = require("../controllers/admin");
 
 // Initializing router
@@ -22,6 +23,7 @@ router.post("/login", login);
 router.post("/addRouteMarker", addRouteMarker);
 router.get("/gettruckbyname", getTruckByName);
 router.get("/getNearbyTrucks", getNearbyTrucks);
+router.get("/getNearestTruck", getNearestTruck);
 router.get("/getTruckFromId", getTruckFromId);
 router.get("/deleteTruck", deleteTruck);
 router.put("/logout", authorizeJWT.verifyJWT, logout);
