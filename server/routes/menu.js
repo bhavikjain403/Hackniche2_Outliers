@@ -5,7 +5,8 @@ const {
   addItem,
   getMenuByCuisine,
   updateItem,
-  getFoodByName
+  getFoodByName,
+  getMenuByTruck
 } = require("../controllers/menu");
 
 // Initializing router
@@ -15,5 +16,6 @@ router.post("/additem", addItem);
 router.post("/updateitem", updateItem);
 router.get("/getmenubycuisine", getMenuByCuisine);
 router.get("/getfoodbyname", getFoodByName);
+router.get("/getMenuByTruck", getMenuByTruck);
 // Exporting Modules
 module.exports = router;
