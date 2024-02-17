@@ -6,8 +6,35 @@ from collections import defaultdict
 
 def getSales():
     # Total Profit, Weekly Earning, Weekly Growth, Day Wise Earnings, Recent Orders
+    data = db.orders_collection.find({})
+    menu = db.menu_collection.find({})
+    price, dishes = 0, 0
+    cuisines = {'North Indian':0 , 'Chinese':0 , 'Continental':0 , 'Asian':0 , 'Italian':0 , 'Beverages':0, 'Desserts':0, "Mediterranean":0}
+    dish = defaultdict(int)
+    for i in data:
+        for item in i["items"]:
+            name = item["name"]
+            quantity = item["quantity"]
+            dishes += quantity
+            menu = db.menu_collection.find({"name": name})
+            for x in menu:
+                print(name, x)
+                dish[name] += 1
+                cuisines[x["cuisine"]] += 1
+                print(name, x["price"]*quantity)
+                price += x["price"]*quantity
+    print("Total Revenue:", price)
+    print("Total Items Sold:", dishes)
+    print("Cuisines: ", (sorted(cuisines.items(), key = lambda item: item[1], reverse=True)))
+    print("Dishes: ",(sorted(dish.items(), key = lambda item: item[1], reverse=True)))
+    
+    output = {}
+    output["Total Revenue"] = price 
+    output["Total Items Sold"] = dishes 
+    output["Top Cuisines"] = sorted(cuisines.items(), key = lambda item: item[1], reverse=True)
+    output["Top Selling Dish"] = sorted(dish.items(), key = lambda item: item[1], reverse=True)
 
-    pass
+    return output
 
 def getSocial():
     # Promotions, Push Notifications, Embed Social Media, Change Menu, OCR Menu

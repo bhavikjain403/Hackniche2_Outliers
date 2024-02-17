@@ -147,7 +147,7 @@ def analytics():
     print(tab)
     if tab == "sales":
         output = getSales()
-        pass
+        return jsonify(output)
     elif tab == "social":
         output = getSocial()
         pass
