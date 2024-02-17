@@ -4,6 +4,7 @@ from menuExtraction import menuExtract
 from werkzeug.utils import secure_filename
 import requests
 import os
+from textblob import TextBlob
 
 app = Flask(__name__)
 
@@ -55,5 +56,25 @@ def menuExtraction():
         return menuExtract(img_loc)
     else:
         return jsonify("Invalid Method")
+
+@app.route("/sentiment", methods=["POST"])
+def senti():
+    if request.method == "POST":
+        text = str(request.data.decode())
+        analysis = TextBlob(text)
+        
+        # Classify polarity as positive, negative, or neutral
+        output = {
+            "success": True,
+            "msg": "",
+        }
+        if analysis.sentiment.polarity > 0:
+            output["sentiment"] = "Positive"
+        elif analysis.sentiment.polarity == 0:
+            output["sentiment"] = "Neutral"
+        else:
+            output["sentiment"] = "Negative"
+        return jsonify(output)
+
 
 app.run(debug=True)

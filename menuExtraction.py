@@ -1,8 +1,12 @@
 import requests
+from decouple import config
 
 def menuExtract(img_loc):
+    
+    OCR_KEY = config("OCR_KEY")
+    
     headers = {
-        "apikey":"K82390265288957",
+        "apikey":OCR_KEY,
         "filetype": "JPG",
         "isTable": "true"
     }
@@ -26,6 +30,7 @@ def menuExtract(img_loc):
                     dish, price = items.split("\t")
                     val["dish"] = dish[1:]
                     val["price"] = price 
+                    val["cuisine"] = "!"
                     menu.append(val)
             print(menu)            
         return menu
