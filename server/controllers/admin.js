@@ -207,15 +207,15 @@ const getNearestTruck = async (req,res) => {
         var dist = distance(latitude,longitude,truck[i].latitude,truck[i].longitude)
         if(dist<miniDist) {
           miniDist = dist
-          miniTruck = truck[i]["_id"]
+          miniTruck = truck[i]
         }
       }
-        console.log(miniTruck)
-        var menu = await Menu.find({truckId:miniTruck, cuisine:cuisine})
+        var menu = await Menu.find({truckId:miniTruck["_id"], cuisine:cuisine})
         res.status(200).json({
             message: "You have the following items!",
             status: true,
             data: menu,
+            truckData: miniTruck
           });
   }
   catch (err) {
