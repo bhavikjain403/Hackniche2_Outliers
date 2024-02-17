@@ -229,6 +229,23 @@ const deleteTruck = async (req,res) => {
    }
 }
 
+const addRouteMarker = async (req,res) => {
+  try {
+    var id = req.body.truckId
+    await Admin.findByIdAndUpdate(id, req.body)
+    res.status(201).json({
+      message: "Route Added!",
+      status: true
+    });
+  }
+  catch (err) {
+  res.status(400).json({
+    message: err.message,
+    status: false
+  });
+}
+}
+
 // Exporting modules
 module.exports = {
   signup,
@@ -237,5 +254,6 @@ module.exports = {
   getTruckByName,
   getNearbyTrucks,
   getTruckFromId,
-  deleteTruck
+  deleteTruck,
+  addRouteMarker
 };
