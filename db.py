@@ -10,6 +10,7 @@ db = client.get_database('test')
 user_collection = pymongo.collection.Collection(db, 'users')
 menu_collection = pymongo.collection.Collection(db, 'menus')
 orders_collection = pymongo.collection.Collection(db, 'orders')
+reviews_collection = pymongo.collection.Collection(db, 'reviews')
 
 # data = [
 #   {
@@ -124,7 +125,7 @@ orders_collection = pymongo.collection.Collection(db, 'orders')
 #     "truckId": "65d091c309914291f8b28dae",
 #     "cuisine": "Italian",
 #     "img": "https://static.toiimg.com/thumb/56868564.cms?imgsize=1948751&width=800&height=800",
-#     "name": "Margherita Pizza",
+#     "name": "Pizza",
 #     "price": 329,
 #     "quantity": 2,
 #     "veg": 1,

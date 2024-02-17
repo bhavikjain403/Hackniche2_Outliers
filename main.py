@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from voiceExtraction import extract_order_spacy_ner
 from menuExtraction import menuExtract
 
@@ -13,6 +13,7 @@ from flask_cors import CORS
 import os
 
 from flask_pymongo import pymongo
+from analytics import *
 
 from textblob import TextBlob
 from decouple import config
@@ -135,5 +136,24 @@ def senti():
             output["sentiment"] = "Negative"
         return jsonify(output)
 
+@app.route("/getImage")
+def word():
+    output = getRating()
+    return send_file(os.getcwd()+"/wordcloud.png")
+
+@app.route("/analytics", methods=["GET"])
+def analytics():
+    tab = request.args.get("tab")
+    print(tab)
+    if tab == "sales":
+        output = getSales()
+        pass
+    elif tab == "social":
+        output = getSocial()
+        pass
+    else:
+        output = getRating()
+        return jsonify(output)
+    return "Hello"
 
 app.run(debug=True)
