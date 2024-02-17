@@ -1,5 +1,7 @@
 import spacy
 from spacy.matcher import Matcher
+import db
+import menu
 
 def extract_order_spacy_ner(text):
     # Load language model (replace with your language)
@@ -22,7 +24,10 @@ def extract_order_spacy_ner(text):
     for pattern in patterns:
         matcher.add("dish_quantity", [pattern], on_match=None)
     # Process text
-    doc = nlp(text)
+    lower = [i.lower() for i in text.split(" ")]
+    val = ' '.join(lower)
+
+    doc = nlp(val)
     matches = matcher(doc)
 
     # Extract information from matches
@@ -40,6 +45,7 @@ def extract_order_spacy_ner(text):
         dish_order = {}
         if(items[0].isnumeric() or items[0] in nums):
             dish_order["dish"] = ' '.join(items[1:])
+            
             if(items[0].isnumeric()):
                 dish_order["quantity"] = int(items[0])
             else:

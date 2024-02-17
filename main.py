@@ -51,10 +51,31 @@ def reply():
     img = 'https://raw.githubusercontent.com/dianephan/flask_upload_photos/main/UPLOADS/DRAW_THE_OWL_MEME.png'
     print("img", img)
     data=list(db.user_collection.find({"phone":num}))
+    # msg = client.messages.create(
+    #     body='Hello there!',
+    #     from_='whatsapp:+14155238886',
+    #     to='whatsapp:+919819396489'
+    # )
     if len(data):
         return respond("Today's special is XYZ Food", img)
     else:
         return respond('You do not have an account. Please create an account first', img)
+
+# Pushing Notifications using Twilio to WA
+@app.route("/pushNotifs", methods=["POST"])
+def push_notifications():
+    if request.method == "POST":
+        itemName = str(request.form["item"])
+        # Finding Image from given Item
+        doc = db.menu_collection.find_one({"name":itemName})
+        image = doc["img"]
+        price = doc["price"]
+        print(image)
+        
+        respond(f"Enjoy Lovely {itemName} at just Rs: {price}", image)
+        return jsonify("Found")
+    else:
+        return jsonify("Invalid Method")
 
 @app.route("/extract", methods=["POST"])
 def orderExtraction():
