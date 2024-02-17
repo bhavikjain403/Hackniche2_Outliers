@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import Navbar from './components/app/Navbar';
 import RouteSelector from './pages/RouteSelector';
 import Menu from './pages/Menu';
+import ProtectedRoute from './pages/ProtectedRoute';
+import Orders from './pages/Orders';
 
 function App() {
   return (
@@ -11,9 +13,38 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<AuthenticationPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/map" element={<RouteSelector />} />
-        <Route path="/menu" element={<Menu />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/map"
+          element={
+            <ProtectedRoute>
+              <RouteSelector />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <Menu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

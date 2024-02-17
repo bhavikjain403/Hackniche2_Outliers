@@ -1,23 +1,23 @@
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Label } from "./components/ui/label";
-import { Input } from "./components/ui/input";
-import { Button } from "./components/ui/button";
-import { Github, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import AuthApi from "./api/auth";
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { Label } from './components/ui/label';
+import { Input } from './components/ui/input';
+import { Button } from './components/ui/button';
+import { Github, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import AuthApi from './api/auth';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -41,8 +41,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       .then((response) => {
         if (response.data) {
           setProfile(response);
+          navigate('/dashboard');
         } else {
-          console.log(response)
+          console.log(response);
           setError(response.data.msg);
         }
       })
@@ -50,20 +51,20 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         if (error.response) {
           return setError(error.response.data.msg);
         }
-        return setError("There has been an error.");
-      })
+        return setError('There has been an error.');
+      });
   };
 
   const setProfile = (response) => {
     let user = { ...response.data };
-    localStorage.setItem("name", user.data.admin.name);
-    localStorage.setItem("id", user.data.admin._id);
-    localStorage.setItem("token", user.data.token);
+    localStorage.setItem('name', user.data.admin.name);
+    localStorage.setItem('id', user.data.admin._id);
+    localStorage.setItem('token', user.data.token);
     return;
   };
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-6">
           <div className="grid gap-2">

@@ -30,6 +30,13 @@ export function MainNav({
       >
         Menu
       </Link>
+      <Link
+        to="/orders"
+        /* TODO: add muted background to text when not active */
+        className="text-sm font-medium transition-colors hover:text-primary"
+      >
+        Orders
+      </Link>
     </nav>
   );
 }
