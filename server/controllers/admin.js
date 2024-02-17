@@ -212,6 +212,23 @@ const getTruckFromId = async (req,res) => {
    }
 }
 
+const deleteTruck = async (req,res) => {
+  try {
+      var id = req.query.id
+      await Admin.findByIdAndDelete(id)
+      res.status(200).json({
+          message: "Truck deleted!",
+          status: true
+        });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 // Exporting modules
 module.exports = {
   signup,
@@ -219,5 +236,6 @@ module.exports = {
   logout,
   getTruckByName,
   getNearbyTrucks,
-  getTruckFromId
+  getTruckFromId,
+  deleteTruck
 };

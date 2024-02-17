@@ -21,7 +21,11 @@ const menuSchema = new mongoose.Schema(
         enum: [0,1,2]
     },
     customization: {},
-    description: String
+    description: String,
+    complete: {
+        type: Boolean,
+        default: true
+    }
 }
 );
 

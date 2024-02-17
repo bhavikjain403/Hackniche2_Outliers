@@ -1,4 +1,5 @@
 // Importing modules
+const { DateRangePicker } = require("@syncfusion/ej2-react-calendars");
 const mongoose = require("mongoose");
 
 // Creating the schema
@@ -27,6 +28,8 @@ const orderSchema = new mongoose.Schema(
         default: Date.now()
     },
 
+    scheduledTime: [],
+
     pickupTime: Date,
 
     accepted: {
@@ -36,7 +39,7 @@ const orderSchema = new mongoose.Schema(
 
     orderStatus: {
         type: String,
-        enum: ['placed', 'preparing', 'picked'],
+        enum: ['placed', 'preordered', 'preparing', 'picked'],
         default: 'placed'
     },
 
