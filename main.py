@@ -22,23 +22,10 @@ import db
 app = Flask(__name__)
 CORS(app)
 
-# CONNECTION_STRING = "mongodb+srv://bhavikjain403:3JXLUL5N1pzApsyb@cluster0.1deu8rv.mongodb.net/?retryWrites=true&w=majority"
-# client = pymongo.MongoClient(CONNECTION_STRING)
-# db = client.get_database('test')
-# user_collection = pymongo.collection.Collection(db, 'users')
-# menu_collection = pymongo.collection.Collection(db, 'menus')
-# orders_collection = pymongo.collection.Collection(db, 'orders')
-
 SID = config("TWILIO_ACCOUNT_SID")
 Auth = config("TWILIO_AUTH_TOKEN")
 
 client = Client(SID, Auth)
-# Bhavikjain@170810
-# message = client.messages.create(
-#                               body='Hello there!',
-#                               from_='whatsapp:+14155238886',
-#                               to='whatsapp:+919152412545'
-#                           )
 def respond(text, img):
     response = MessagingResponse()
     message = Message()
