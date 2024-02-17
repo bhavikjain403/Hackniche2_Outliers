@@ -35,30 +35,28 @@ import { uploadFileToFirebase } from '@/lib/firebase-upload-file';
 import { app } from '@/lib/firebase';
 import vegIcon from '../assets/veg-icon.png';
 import nonVegIcon from '../assets/non-veg-icon.png';
+import axios from 'axios';
+import { NODEJS_ENDPOINT } from '../api/endpoints';
 
 function Menu() {
-  const dummyMenuItem = {
-    truckId: 0,
-    cuisine: cuisines[0],
-    img: 'https://firebasestorage.googleapis.com/v0/b/nomnom-7ef89.appspot.com/o/menu%2F2024161750166484c74a1fdcassata-semifreddo-15858-2.jpg?alt=media&token=b8b2683a-a631-472f-9604-a64e9271a449',
-    name: 'Ice cream',
-    price: 999,
-    quantity: 20,
-    veg: 0,
-    customization: [
-      { name: 'chocolate syrup', amount: 20 },
-      { name: 'choco chips', amount: 10 },
-    ],
-    description: 'this is an ice creamy cream',
-  };
-  const items = [
-    dummyMenuItem,
-    dummyMenuItem,
-    dummyMenuItem,
-    dummyMenuItem,
-    dummyMenuItem,
-    dummyMenuItem,
-  ];
+  const [menu, setMenu] = useState([])
+
+  useEffect(() => {
+    const id = localStorage.getItem('id');
+    axios
+      .get(NODEJS_ENDPOINT + 'menu/getMenuByTruck' + '?id=' + id)
+      .then((data) => {
+        // const fetchedOrders = data.data.data.map((item, index) => ({
+        //   ...item,
+        //   id: item._id,
+        // }));
+        // console.log(new Date(fetchedOrders[0].placedTime).toLocaleTimeString());
+        console.log(data.data.data);
+        setMenu(data.data.data);
+      });
+  }, []);
+
+  const items = menu;
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
@@ -116,7 +114,7 @@ function ViewMenu({ items, enterEditingMode }) {
                     <CardContent className="flex items-center flex-col p-0">
                       <img
                         src={item.img}
-                        className="mt-2 w-[95%] rounded-2xl  object-cover"
+                        className="mt-2 w-[95%] rounded-2xl object-cover aspect-square"
                       />
 
                       <div className="flex flex-col w-full px-3 pb-2 font-semibold text-xl">
