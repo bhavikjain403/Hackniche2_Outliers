@@ -18,15 +18,13 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Importing Routes
-// const authRoute = require("./routes/auth");
-// const sCouponRoute = require("./routes/sCoupon");
-// const dCouponRoute = require("./routes/dCoupon");
+const userRoute = require("./routes/user");
+const adminRoute = require("./routes/admin");
 
 
 // Routes
-// app.use("/api/auth", authRoute);
-// app.use("/api/Scoupon", sCouponRoute);
-// app.use("/api/Dcoupon", dCouponRoute);
+app.use("/api/user", userRoute);
+app.use("/api/admin", adminRoute);
 
 
 app.get("/api", (req, res) => {
