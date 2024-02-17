@@ -76,7 +76,7 @@ def orderExtraction():
         print(text)
 
         output = {
-            "success": True,
+            "status": True,
             "msg": "",
             "data": []
         }
@@ -85,13 +85,13 @@ def orderExtraction():
             extracted = extract_order_spacy_ner(text)
             output["data"] = extracted
         except Exception as e:
-            output["success"] = False 
+            output["status"] = False 
             output["msg"] = str(e) 
         
         return jsonify(output)
     else:
         output = {
-            "success": False,
+            "status": False,
             "msg": "Invalid Request Type",
             "data": []
         }
