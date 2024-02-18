@@ -10,7 +10,7 @@ const menuSchema = new mongoose.Schema(
     },
     cuisine: {
         type: String,
-        enum: ['North Indian' , 'Chinese' , 'Continental' , 'Asian' , 'Italian' , 'Beverages', 'Desserts']
+        enum: ['North Indian' , 'Chinese' , 'Continental' , 'Asian' , 'Italian' , 'Beverages', 'Desserts', 'South Indian']
     },
     img: String,
     name: String,

@@ -11,7 +11,7 @@ const sendNotification = async (req, res) => {
   var body = req.body.body || "Here's one";
   await admin.messaging().sendMulticast({
     tokens: [
-      "cStQ_CHkRcK1MleScAdjMO:APA91bHhSCbaJJYfnwoOVGu2G8JxtyzmDxWyXWPQSYEN5usS-0NBMxDwqfIAwCp4LeZlQv0HV59XtsHck1Gncw8QK5715njAw_jMK38IVS15SG7mHrsgduvJjJkpOXeyRdosMnu7Wzyp",
+      "cB99XYGCRXCLUYmqQdK8Sh:APA91bFqxcSuAbfGUT4maD8kgHLCwJJY_qf96uR9CfiRTUr1a5ayiEty6vBogoTf1dPKdX1WY-T4KKohQb23LSlyWolJuC0OhucIE0O9Y_VjuaD2j4YBmyrE8XsHgTFsDORG-GVdrxot",
     ],
     notification: {
       title: title,
