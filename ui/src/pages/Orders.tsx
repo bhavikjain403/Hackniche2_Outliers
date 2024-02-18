@@ -23,6 +23,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { toast } from 'sonner';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -105,7 +107,7 @@ function Orders() {
               columns={columns}
               initialState={{
                 pagination: {
-                  paginationModel: { page: 0, pageSize: 5 },
+                  paginationModel: { page: 0, pageSize: 10 },
                 },
               }}
               onRowClick={(e) => {
@@ -113,16 +115,18 @@ function Orders() {
                 setCurrentOrder(e.row);
                 setAlertOpen(true);
               }}
-              pageSizeOptions={[5, 10]}
+              pageSizeOptions={[10, 20]}
               // checkboxSelection
             />
           </CardContent>
-          <CustomAlert
-            alertOpen={alertOpen}
-            setAlertOpen={setAlertOpen}
-            currentOrder={currentOrder}
-            setRefetch={setRefetch}
-          />
+          <div className="sjkdhf">
+            <CustomAlert
+              alertOpen={alertOpen}
+              setAlertOpen={setAlertOpen}
+              currentOrder={currentOrder}
+              setRefetch={setRefetch}
+            />
+          </div>
         </Card>
       </div>
     </div>
@@ -242,6 +246,10 @@ function CustomAlert({ alertOpen, setAlertOpen, currentOrder, setRefetch }) {
                 console.log('sent post');
                 setRefetch((state) => state + 1);
                 setAlertOpen(false);
+                toast('Order Delivered', {
+                  description: 'Order was marked as picked successfully!',
+                  action: { label: 'Close', onClick: () => null },
+                });
               }}
               className="flex-1"
             >

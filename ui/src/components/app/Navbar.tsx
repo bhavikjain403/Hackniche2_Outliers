@@ -1,7 +1,7 @@
-import { MainNav } from "@/dashboard/MainNav";
-import TeamSwitcher from "@/dashboard/TeamSwitcher";
-import { Search } from "@/dashboard/search";
-import { UserNav } from "@/dashboard/userNav";
+import { MainNav } from '@/dashboard/MainNav';
+import TeamSwitcher from '@/dashboard/TeamSwitcher';
+import { Search } from '@/dashboard/search';
+import { UserNav } from '@/dashboard/userNav';
 
 function Navbar() {
   return (
@@ -10,8 +10,8 @@ function Navbar() {
         <TeamSwitcher />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
-          <Search />
-          <UserNav />
+          {/* <Search />
+          <UserNav /> */}
         </div>
       </div>
     </div>
