@@ -29,6 +29,7 @@ import Slider from '@mui/material/Slider';
 import { NODEJS_ENDPOINT } from '@/api/endpoints';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { minutesToTime } from '@/lib/utils';
 
 type marker = {
   coordinate: number[];
@@ -272,15 +273,7 @@ function CustomSlider({ index, setMarkers }) {
         value={value}
         onChange={handleChange}
         valueLabelDisplay="auto"
-        valueLabelFormat={(e) => {
-          const ampm = Math.floor(e / 60) >= 12 ? 'pm' : 'am';
-          let hour = Math.floor(e / 60) % 24;
-          if (hour > 12) {
-            hour -= 12;
-          }
-          const minute = e % 60 || '00';
-          return `${hour}:${minute}${ampm}`;
-        }}
+        valueLabelFormat={(e) => minutesToTime(e)}
         max={1440}
         step={15}
         disableSwap
