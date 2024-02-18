@@ -8,6 +8,7 @@ import L from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { toast } from 'sonner';
 import 'leaflet-routing-machine';
+import LoaderSpinner from '@/components/ui/LoaderSpinner';
 
 function getLocationString(location) {
   return `${location.neighbourhood}, ${location.road}, ${location.city}, ${location.postcode}, ${location.state}`;
@@ -20,10 +21,9 @@ function UpdateLocation() {
   const [currentPosition, setCurrentPosition] = useState([0, 0]);
 
   useEffect(() => {
-    /* TODO: only for debug */
     if (travellingTo) {
-      setCurrentPosition([19.1074064, 72.8372358]);
-      return;
+      // setCurrentPosition([19.1074064, 72.8372358]);
+      // return;
       if ('geolocation' in navigator && !currentPosition[0]) {
         navigator.geolocation.getCurrentPosition(function (position) {
           console.log('location is', position.coords);
@@ -66,18 +66,22 @@ function UpdateLocation() {
           <h2 className="text-3xl font-bold tracking-tight">Update Location</h2>
         </div>
         <Card className="grid grid-cols-4 gap-10">
-          {markerLocations.map((item, index) => {
-            return (
-              <MarkerLocationCard
-                routeMarker={routeMarker}
-                index={index}
-                location={item}
-                key={index}
-                setTravellingTo={setTravellingTo}
-                travellingTo={travellingTo}
-              />
-            );
-          })}
+          {markerLocations.length > 0 ? (
+            markerLocations.map((item, index) => {
+              return (
+                <MarkerLocationCard
+                  routeMarker={routeMarker}
+                  index={index}
+                  location={item}
+                  key={index}
+                  setTravellingTo={setTravellingTo}
+                  travellingTo={travellingTo}
+                />
+              );
+            })
+          ) : (
+            <LoaderSpinner />
+          )}
         </Card>
         {travellingTo && currentPosition[0] && (
           <Card className="h-96">
@@ -172,7 +176,6 @@ function MarkerLocationCard({
           {minutesToTime(routeMarker[index].endTime)}
         </h1>
         <div className="w-full flex justify-center my-2">
-          {/* TODO: send push notification */}
           {travellingTo ? (
             JSON.stringify(travellingTo) === JSON.stringify(location) ? (
               <Button

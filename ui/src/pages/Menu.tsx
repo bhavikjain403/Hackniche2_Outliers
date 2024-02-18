@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -22,7 +23,7 @@ import { Dropzone, FileMosaic } from '@dropzone-ui/react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cuisines } from '@/lib/MenuCuisines';
-import { Star } from 'lucide-react';
+import { AlertTriangle, Lightbulb, Star } from 'lucide-react';
 import { LegacyRef, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import {
   getStorage,
@@ -37,9 +38,11 @@ import vegIcon from '../assets/veg-icon.png';
 import nonVegIcon from '../assets/non-veg-icon.png';
 import axios from 'axios';
 import { NODEJS_ENDPOINT } from '../api/endpoints';
+import { toast } from 'sonner';
 
 function Menu() {
-  const [menu, setMenu] = useState([])
+  const [menu, setMenu] = useState([]);
+  const [refetch, setRefetch] = useState(0);
 
   useEffect(() => {
     const id = localStorage.getItem('id');
@@ -54,20 +57,22 @@ function Menu() {
         console.log(data.data.data);
         setMenu(data.data.data);
       });
-  }, []);
+    console.log('refetch done');
+  }, [refetch]);
 
   const items = menu;
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
   function toggleEditMode(item) {
-    console.log(item);
     if (item != null) {
       setEditingItem(item);
       setIsEditing(true);
     } else {
       setEditingItem(null);
       setIsEditing(false);
+      setTimeout(() => {
+        setRefetch((state) => state + 1);
+      }, 1000);
     }
   }
 
@@ -81,37 +86,176 @@ function Menu() {
           <TabsList>
             <TabsTrigger value="view">View menu</TabsTrigger>
             <TabsTrigger value="add">Add item</TabsTrigger>
+            <TabsTrigger value="scan">Scan menu</TabsTrigger>
           </TabsList>
           {isEditing ? (
             <EditItem item={editingItem} exitEditingMode={toggleEditMode} />
           ) : (
-            <ViewMenu items={items} enterEditingMode={toggleEditMode} />
+            <ViewMenu
+              setRefetch={setRefetch}
+              items={items}
+              enterEditingMode={toggleEditMode}
+            />
           )}
-          <AddItem prefilledItem={null} isInEditMode={false} />
+          <AddItem
+            prefilledItem={null}
+            isInEditMode={false}
+            setRefetch={setRefetch}
+            exitEditingMode={() => null}
+          />
+          <ScanMenu setRefetch={setRefetch} />
         </Tabs>
       </div>
     </div>
   );
 }
 
-function EditItem({ item, exitEditingMode }) {
-  return <AddItem prefilledItem={item} isInEditMode={true} />;
+function ScanMenu({ setRefetch }) {
+  const [thumbnail, setThumbnail] = useState([]);
+  const [ocrItems, setOcrItems] = useState([]);
+
+  useEffect(() => {
+    console.log(ocrItems, 'ocr items in useeffect');
+    if (ocrItems.length > 0) {
+      axios
+        .post(NODEJS_ENDPOINT + 'menu/bulkadditem', ocrItems)
+        .then((data) => {
+          console.log(data);
+          toast('Menu items added', {
+            description: 'Menu items were added succesfully!',
+            action: {
+              label: 'Close',
+              onClick: () => null,
+            },
+          });
+          setRefetch((state) => state + 1);
+          setTabValue('view');
+        });
+    }
+  }, [ocrItems]);
+  return (
+    <TabsContent value="scan">
+      <Card>
+        <CardHeader>
+          <CardTitle>Scan menu</CardTitle>
+          <CardDescription>Upload image of menu card</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Dropzone
+            onChange={(file) => {
+              console.log(file);
+              setThumbnail(file);
+            }}
+            value={thumbnail}
+            accept="image/png, image/jpeg, image/webp"
+            maxFiles={1}
+          >
+            {thumbnail.map((file) => {
+              console.log(file);
+              return (
+                <FileMosaic
+                  preview
+                  key={file.id}
+                  {...file}
+                  onDelete={() => setThumbnail([])}
+                  info
+                />
+              );
+            })}
+          </Dropzone>
+        </CardContent>
+        <CardFooter className="flex justify-center px-6">
+          <Button
+            className="flex-1"
+            onClick={() => {
+              console.log(thumbnail[0].file);
+              const formdata = new FormData();
+              formdata.append(
+                'image',
+                thumbnail[0].file,
+                thumbnail[0].file.name
+              );
+              formdata.append('isTable', 'true');
+
+              const requestOptions = {
+                method: 'POST',
+                body: formdata,
+                redirect: 'follow',
+              };
+
+              const truckId = localStorage.getItem('id');
+              toast('Retrieving Menu', {
+                description:
+                  'The menu items are being retrieved by our OCR systems...',
+                action: {
+                  label: 'Close',
+                  onClick: () => null,
+                },
+              });
+              fetch(
+                'https://6b0c-2402-3a80-42b0-6132-5813-1500-3e17-6e4d.ngrok-free.app/admin/menuextract',
+                requestOptions
+              )
+                .then((response) => response.text())
+                .then((result) => {
+                  const finalResult = JSON.parse(result).map((item) => ({
+                    name: item.dish,
+                    price: parseInt(item.price.split(' ')[1]),
+                    complete: false,
+                    truckId: truckId,
+                  }));
+                  console.log(finalResult);
+                  setOcrItems(finalResult);
+                  toast('Menu Items retrieved', {
+                    description: 'Menu item were retrieved successfully!',
+                    action: {
+                      label: 'Close',
+                      onClick: () => null,
+                    },
+                  });
+                })
+                .catch((error) => console.error(error));
+            }}
+          >
+            Submit
+          </Button>
+        </CardFooter>
+      </Card>
+    </TabsContent>
+  );
 }
 
-function ViewMenu({ items, enterEditingMode }) {
+function EditItem({ item, exitEditingMode }) {
+  return (
+    <AddItem
+      exitEditingMode={exitEditingMode}
+      prefilledItem={item}
+      isInEditMode={true}
+    />
+  );
+}
+
+function ViewMenu({ setRefetch, items, enterEditingMode }) {
   return (
     <TabsContent value="view">
-      <Card>
+      <Card className="border-0">
         <CardContent className="px-1 py-0 min-h-[70vh]">
           <ScrollArea className=" py-2 h-full">
             <div className="w-full grid grid-cols-4 gap-5 px-4">
               {items.map((item, index) => {
+                console.log(item.complete);
                 return (
                   <Card
                     key={index}
                     className="rounded-3xl overflow-hidden drop-shadow-lg pb-2"
                   >
                     <CardContent className="flex items-center flex-col p-0">
+                      {item.complete === false && (
+                        <AlertTriangle
+                          size={50}
+                          className="absolute drop-shadow-lg top-4 right-4 stroke-amber-300 rounded-md  animate-pulse"
+                        />
+                      )}
                       <img
                         src={item.img}
                         className="mt-2 w-[95%] rounded-2xl object-cover aspect-square"
@@ -142,12 +286,35 @@ function ViewMenu({ items, enterEditingMode }) {
                         <Button
                           variant={'secondary'}
                           className="border-slate-300 border-2 flex-1"
-                          /* TODO: add id here */
                           onClick={() => enterEditingMode(item)}
                         >
                           Edit
                         </Button>
-                        <Button className="flex-1">Delete</Button>
+                        <Button
+                          onClick={() => {
+                            axios
+                              .get(
+                                NODEJS_ENDPOINT +
+                                  'menu/deleteitem?id=' +
+                                  item._id
+                              )
+                              .then((data) => {
+                                console.log(data);
+                                toast('Menu item deleted', {
+                                  description:
+                                    'Menu item was deleted successfully!',
+                                  action: {
+                                    label: 'Close',
+                                    onClick: () => null,
+                                  },
+                                });
+                                setRefetch((state) => state + 1);
+                              });
+                          }}
+                          className="flex-1"
+                        >
+                          Delete
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -166,7 +333,7 @@ type customization = {
   amount: number;
 };
 
-function AddItem({ prefilledItem, isInEditMode }) {
+function AddItem({ setRefetch, exitEditingMode, prefilledItem, isInEditMode }) {
   const formRef = useRef();
   const fbApp = app;
   const storage = getStorage();
@@ -228,17 +395,48 @@ function AddItem({ prefilledItem, isInEditMode }) {
       }
 
       const result = {
-        truckId: 0,
+        truckId: localStorage.getItem('id'),
         cuisine,
         img: url,
         name,
-        price: amount,
-        quantity,
-        veg: category,
+        price: parseInt(amount),
+        quantity: parseInt(quantity),
+        veg: parseInt(category),
         customization,
         description,
+        complete: true,
       };
       console.log(result);
+
+      if (isInEditMode) {
+        axios
+          .post(NODEJS_ENDPOINT + 'menu/updateitem', {
+            ...result,
+            _id: prefilledItem._id,
+          })
+          .then((data) => {
+            console.log(data);
+            toast('Item was updated', {
+              description: 'Item was succesfully updated!',
+              action: {
+                label: 'Close',
+                onClick: () => null,
+              },
+            });
+          });
+      } else {
+        axios.post(NODEJS_ENDPOINT + 'menu/additem', result).then((data) => {
+          console.log(data);
+          toast('Item was added', {
+            description: 'Item was succesfully added to menu!',
+            action: {
+              label: 'Close',
+              onClick: () => null,
+            },
+          });
+        });
+      }
+      console.log('item was edited');
     }
   }
 
@@ -360,25 +558,38 @@ function AddItem({ prefilledItem, isInEditMode }) {
                 Add
               </Button>
               <div className="space-y-4 flex flex-col">
-                {customizations?.map((item, index) => {
-                  return (
-                    <CustomizationPill
-                      customization={item}
-                      setCustomization={setCustomizations}
-                      index={index}
-                      key={index}
-                    />
-                  );
-                })}
+                {customizations.length > 0 &&
+                  customizations?.map((item, index) => {
+                    return (
+                      <CustomizationPill
+                        customization={item}
+                        setCustomization={setCustomizations}
+                        index={index}
+                        key={index}
+                      />
+                    );
+                  })}
               </div>
             </div>
             <Button
+              className="flex-1"
               onClick={(e) => {
                 e.preventDefault();
                 prepareDataForApiRequest();
+                exitEditingMode();
+                setRefetch((state) => state + 1);
               }}
             >
               Submit
+            </Button>
+            <Button
+              onClick={() => {
+                exitEditingMode();
+              }}
+              className="flex-1"
+              variant={'secondary'}
+            >
+              Close
             </Button>
           </form>
         </CardContent>

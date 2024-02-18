@@ -53,8 +53,8 @@ function RouteSelector() {
   /* get geolocation */
   useEffect(() => {
     /* TODO: only for debug */
-    setPosition([19.1074064, 72.8372358]);
-    return;
+    // setPosition([19.1074064, 72.8372358]);
+    // return;
     if ('geolocation' in navigator && !position[0]) {
       navigator.geolocation.getCurrentPosition(function (position) {
         console.log('location is', position.coords);

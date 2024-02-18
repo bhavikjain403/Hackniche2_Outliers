@@ -10,42 +10,46 @@ import { CalendarDateRangePicker } from '../dashboard/DateRangePicker';
 import { Button } from 'react-day-picker';
 import { Overview } from '../dashboard/Overview';
 import { RecentSales } from '../dashboard/RecentSales';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BasketAnalysis } from '@/dashboard/BasketAnalysis';
 import { RecentReviews } from '@/dashboard/RecentReviews';
-import wordblob from "../assets/getImage.png"
+import wordblob from '../assets/getImage.png';
 
 export default function DashboardPage() {
-  const [sales, setSales] = useState([])
-  const [rating, setRating] = useState([])
-  const [image, setImage] = useState([])
+  const [sales, setSales] = useState([]);
+  const [rating, setRating] = useState([]);
+  const [image, setImage] = useState([]);
 
-  useEffect(()=> {
+  useEffect(() => {
     axios
-      .get("https://6b0c-2402-3a80-42b0-6132-5813-1500-3e17-6e4d.ngrok-free.app/analytics?tab=sales", {
-        headers : {
-          "ngrok-skip-browser-warning": "69420"
+      .get(
+        'https://6b0c-2402-3a80-42b0-6132-5813-1500-3e17-6e4d.ngrok-free.app/analytics?tab=sales',
+        {
+          headers: {
+            'ngrok-skip-browser-warning': '69420',
+          },
         }
-      }
       )
       .then((data) => {
         // console.log(data.data);
-        setSales(data.data)
+        setSales(data.data);
       });
 
-      axios
-      .get("https://6b0c-2402-3a80-42b0-6132-5813-1500-3e17-6e4d.ngrok-free.app/analytics?tab=rating", {
-        headers : {
-          "ngrok-skip-browser-warning": "69420"
+    axios
+      .get(
+        'https://6b0c-2402-3a80-42b0-6132-5813-1500-3e17-6e4d.ngrok-free.app/analytics?tab=rating',
+        {
+          headers: {
+            'ngrok-skip-browser-warning': '69420',
+          },
         }
-      }
       )
       .then((data) => {
         console.log(data.data);
-        setRating(data.data)
+        setRating(data.data);
       });
-  }, [])
+  }, []);
 
   return (
     <>
@@ -61,15 +65,7 @@ export default function DashboardPage() {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -92,7 +88,9 @@ export default function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">Rs. {sales["Total Revenue"]}</div>
+                    <div className="text-2xl font-bold">
+                      Rs. {sales['Total Revenue']}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p>
@@ -119,7 +117,9 @@ export default function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">Rs. {sales["Total Revenue"]}</div>
+                    <div className="text-2xl font-bold">
+                      Rs. {sales['Total Revenue']}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p>
@@ -127,7 +127,9 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Items Sold</CardTitle>
+                    <CardTitle className="text-sm font-medium">
+                      Items Sold
+                    </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -143,7 +145,9 @@ export default function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+{sales["Total Items Sold"]}</div>
+                    <div className="text-2xl font-bold">
+                      +{sales['Total Items Sold']}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       +19% from last month
                     </p>
@@ -168,15 +172,17 @@ export default function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className='flex'>
-
-                    {sales["Top Selling Dish"]?.slice(0,3).map((data)=>{
-                      return  <div className="text-2xl font-bold pr-2">{data[0]} {",  "} </div>;
-                    })}
+                    <div className="flex">
+                      {sales['Top Selling Dish']
+                        ?.slice(0, 3)
+                        .map((data, index) => {
+                          return (
+                            <div className="text-2xl font-bold pr-2">
+                              {data[0]} {index != 2 && ',  '}
+                            </div>
+                          );
+                        })}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      +201 since last hour
-                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -193,11 +199,15 @@ export default function DashboardPage() {
                   <CardHeader>
                     <CardTitle>Top Cuisines</CardTitle>
                     <CardDescription>
-                      You made <span className='text-bold'>{sales["Total Items Sold"]} </span>sales this month.
+                      You made{' '}
+                      <span className="text-bold">
+                        {sales['Total Items Sold']}{' '}
+                      </span>
+                      sales this month.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentSales children={sales}/>
+                    <RecentSales children={sales} />
                   </CardContent>
                 </Card>
               </div>
@@ -223,7 +233,9 @@ export default function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{Math.floor(rating["avg_rating"]*1000)/1000}⭐</div>
+                    <div className="text-2xl font-bold">
+                      {Math.floor(rating['avg_rating'] * 1000) / 1000}⭐
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p>
@@ -249,18 +261,17 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">Mumbai Suburban</div>
-                    <p className="text-xs text-muted-foreground">
-                    </p>
+                    <p className="text-xs text-muted-foreground"></p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium">
                       WordBlob
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <img src={wordblob} alt="wordblob"/>
+                    <img src={wordblob} alt="wordblob" />
                   </CardContent>
                 </Card>
                 <Card>
@@ -295,7 +306,7 @@ export default function DashboardPage() {
                     <CardTitle>Market Basket Analysis</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <BasketAnalysis children={rating} />
+                    <BasketAnalysis rating={rating} />
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
@@ -306,7 +317,7 @@ export default function DashboardPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentReviews children={rating}/>
+                    <RecentReviews children={rating} />
                   </CardContent>
                 </Card>
               </div>
