@@ -3,6 +3,7 @@ from wordcloud import WordCloud
 import os
 from itertools import permutations
 from collections import defaultdict
+from apyori import apriori
 
 def getSales():
     # Total Profit, Weekly Earning, Weekly Growth, Day Wise Earnings, Recent Orders
@@ -40,63 +41,6 @@ def getSocial():
     # Promotions, Push Notifications, Embed Social Media, Change Menu, OCR Menu
     pass
 
-support_threshold = 2
-confidence_threshold = 0.6
-k=3
-# calculating candidate and pruned candidate mapping
-def candidate_generation(baskets, support_threshold=2):
-    # will need these later
-    basket_lengths = [len(i) for i in baskets]
-    mapping = defaultdict(lambda : 0)
-
-    for ton_length in range(1, k+1):
-        # loop over baskets to create permutations
-        for basket in baskets:
-            perms = list(permutations(basket, ton_length))
-        # count of each permutation
-        for permutation in perms:
-            mapping[permutation] += 1
-    return dict(mapping)
-
-
-def pruning(mapping):
-    # loop over all keys in dict and remove all having length less than support threshold
-    dict_keys = list(mapping.keys())[:]
-    for key in dict_keys:
-        if mapping[key] < support_threshold:
-            del mapping[key]
-
-    return dict(mapping)
-
-# calculating confidence
-def confidence_calc(mapping):
-    confidence = {}
-    for value, key in enumerate(mapping):
-        # print(key, mapping[key], len(key))'
-        if(len(key)==k):
-            ele = key
-            confidence[f"({ele[0]}, {ele[1]}) -> {ele[2]}"] = mapping[ele]/mapping[(ele[0], ele[1])]
-
-    for value, key in enumerate(mapping):
-        # print(key, mapping[key], len(key))'
-        if(len(key)==k):
-            ele = key
-            confidence[f"{ele[0]} -> ({ele[1]}, {ele[2]})"] = mapping[ele]/mapping[(ele[0],)]
-    return confidence
-
-
-# displaying top 5 rules
-def display_top(conf):
-    dict_keys = list(conf.keys())[:]
-    for key in dict_keys:
-        if conf[key] < confidence_threshold:
-            del conf[key]
-    print("Top Association Rules are: ")
-    result = []
-    for key, val in conf.items():
-        print(f"Association Rule: '{key}', confidence={val}")
-        result.append(key)
-    return result
 
 def getRating():
     # Market Basket Analysis, Avg Ratings, Recent Reviews, WordCloud for Reviews
@@ -132,20 +76,26 @@ def getRating():
     baskets = []
     for x in out:
         temp = []
+        # print(x)
         for item in x['items']:
             for _ in range(item['quantity']):
                 temp.append(item['name'])
         baskets.append(temp)
-    # print(baskets)
-            
-    candidate_mapping = candidate_generation(baskets, support_threshold)
-    mapping = pruning(candidate_mapping)
-    print(mapping)
+    print(baskets)
 
-    conf = confidence_calc(mapping)
-    # for key, val in conf.items():
-    #     print(f"Association Rule: '{key}', confidence={val}")
+    
+    rules = apriori(transactions = baskets, min_support = 0.003, min_confidence = 0.2, min_lift = 3, min_length = 2, max_length = 2)
 
-    result = display_top(conf)
-    output["basket_analysis"] = result
+    ## Displaying the first results coming directly from the output of the apriori function
+    results = list(rules)
+    print("Results:", results)
+
+    rules = []
+    for result in results:
+        lhs = tuple(result[2][0][0])[0]
+        rhs = tuple(result[2][0][1])[0]
+        conf = result[1]
+        rules.append(f"{lhs} -> {rhs} with Score: {round(conf, 3)*10}")
+    
+    output["basket_analysis"] = rules
     return output
