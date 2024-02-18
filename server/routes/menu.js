@@ -3,6 +3,7 @@ const express = require("express");
 // Importing controllers and utilities
 const {
   addItem,
+  bulkAddItem,
   getMenuByCuisine,
   updateItem,
   getFoodByName,
@@ -14,6 +15,7 @@ const {
 const router = new express.Router();
 
 router.post("/additem", addItem);
+router.post("/bulkAddItem", bulkAddItem);
 router.post("/updateitem", updateItem);
 router.get("/getmenubycuisine", getMenuByCuisine);
 router.get("/getfoodbyname", getFoodByName);

@@ -19,6 +19,28 @@ const addItem = async (req,res) => {
      }
 }
 
+const bulkAddItem = async (req,res) => {
+  try {
+    var data = req.body
+    for(let i=0;i<data.length;i++) {
+      var newMenu = new Menu({
+          ...data[i]
+      })
+      await newMenu.save()
+    }
+      res.status(201).json({
+          message: "Item added!",
+          status: true
+        });
+  }
+  catch (err) {
+      res.status(400).json({
+        message: err.message,
+        status: false
+      });
+   }
+}
+
 const updateItem = async (req,res) => {
     try {
         var id = req.body._id
@@ -140,5 +162,6 @@ module.exports = {
     updateItem,
     getFoodByName,
     getMenuByTruck,
-    deleteItem
+    deleteItem,
+    bulkAddItem
 };
