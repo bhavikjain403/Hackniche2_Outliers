@@ -107,7 +107,7 @@ def orderExtraction():
         return jsonify(output)
 
 
-@app.route("/admin/menuextract", methods=["POST"])
+@app.route("/admin/menuextract", methods=["POST", "OPTIONS"])
 def menuExtraction():
     if request.method=="POST":
         img = request.files['image']

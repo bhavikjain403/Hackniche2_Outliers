@@ -95,7 +95,7 @@ def getRating():
         lhs = tuple(result[2][0][0])[0]
         rhs = tuple(result[2][0][1])[0]
         conf = result[1]
-        rules.append(f"{lhs} -> {rhs} with Score: {round(conf, 3)*10}")
+        rules.append(f"{lhs} -> {rhs}")
     
     output["basket_analysis"] = rules
     return output
